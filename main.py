@@ -36,16 +36,15 @@ def count_distinct_R(n):
         return 0
     if n == 2:
         return 1
-    else:
-        distinct = set()
-        for i, G in enumerate(enumerate_graphs(n)):
-            log(f"computing # of unique R vals for graph isomorphism class {i}")
-            R = resistance_matrix(G)
-            R_unique = np.unique(R.flatten())
-            log(f"{len(R_unique)} distinct vals found")
-            distinct = distinct.union(set(R_unique))
-            log(f"current total: {len(distinct)}")
-        return len(distinct)
+    distinct = set()
+    for i, G in enumerate(enumerate_graphs(n)):
+        log(f"computing # of unique R vals for graph isomorphism class {i}")
+        R = resistance_matrix(G)
+        R_unique = np.unique(R.flatten())
+        log(f"{len(R_unique)} distinct vals found")
+        distinct = distinct.union(set(R_unique))
+        log(f"current total: {len(distinct)}")
+    return len(distinct)
 
 async def spinner(task):
     i = 0
@@ -107,4 +106,5 @@ def main():
     else:
         log(f"n={n} already computed")
 
-main()
+if __name__ == "__main__":
+    main()
