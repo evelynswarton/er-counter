@@ -4,33 +4,33 @@ Computational enumeration of distinct effective resistance values in connected g
 
 ## Overview
 
-For a connected graph \(G\), the **effective resistance** \(R_G(u,v)\) measures the electrical resistance between vertices \(u\) and \(v\) when every edge is treated as a unit resistor.
+For a connected graph $G$, the **effective resistance** $R_G(u,v)$ measures the electrical resistance between vertices $u$ and $v$ when every edge is treated as a unit resistor.
 
 This project asks:
 
-> **How many distinct effective resistance values occur among all connected graphs on \(n\) vertices?**
+> **How many distinct effective resistance values occur among all connected graphs on $n$ vertices?**
 
 Define
 
-\[
+$$
 D_n =
 \bigcup_{\substack{G\text{ connected}\\|V(G)|=n}}
 \{R_G(u,v) : u,v\in V(G)\},
-\]
+$$
 
 and let
 
-\[
+$$
 d(n)=|D_n|.
-\]
+$$
 
-`er-counter` computes \(d(n)\) by enumerating connected unlabeled graphs and collecting the effective resistance values that occur in each graph.
+`er-counter` computes $d(n)$ by enumerating connected unlabeled graphs and collecting the effective resistance values that occur in each graph.
 
 ## Current Results
 
 The computation currently gives:
 
-| \(n\) | \(d(n)\) |
+| $n$ | $d(n)$ |
 |---:|---:|
 | 1 | 0 |
 | 2 | 1 |
@@ -42,27 +42,30 @@ The computation currently gives:
 | 8 | 287,573 |
 | 9 | 10,262,122 |
 
-The rapid growth of the sequence makes exhaustive computation increasingly expensive as \(n\) increases.
+The rapid growth of the sequence makes exhaustive computation increasingly expensive as $n$ increases.
 
 ## Method
 
-For each \(n\):
+For each value of `n`:
 
-1. `geng` enumerates all connected unlabeled graphs on \(n\) vertices.
-2. Each graph is converted to its Laplacian matrix \(L\).
-3. The Moore–Penrose pseudoinverse \(L^+\) is computed.
-4. Effective resistances are obtained from
+1. `geng` enumerates all connected unlabeled graphs on `n` vertices.
+2. Each graph is converted to its Laplacian matrix.
+3. The Moore–Penrose pseudoinverse of the Laplacian is computed.
+4. The effective resistance between every pair of vertices is computed.
+5. The distinct resistance values are added to the global set.
+6. The resulting count is written to `distinct_R.seq`.
 
-\[
-R_G(u,v)
-=
-L^+_{uu}+L^+_{vv}-2L^+_{uv}.
-\]
+For a graph $G$ with Laplacian $L$, effective resistance is computed using the
+Moore–Penrose pseudoinverse $L^+$:
 
-5. The distinct values are collected across all graphs.
-6. The resulting value \(d(n)\) is appended to `distinct_R.seq`.
+$$
+R_G(u,v) =
+L^+_{uu} + L^+_{vv} - 2L^+_{uv}.
+$$
 
-Graph isomorphism classes are enumerated using [`nauty`](https://pallini.di.uniroma1.it/), avoiding redundant computation over isomorphic labeled graphs.
+Graph isomorphism classes are enumerated using
+[`nauty`](https://pallini.di.uniroma1.it/), avoiding redundant computation over
+isomorphic labeled graphs.
 
 ## Usage
 
@@ -81,7 +84,7 @@ which geng
 
 ### Run
 
-Compute the value for a particular \(n\):
+Compute the value for a particular $n$:
 
 ```bash
 python3 main.py n
@@ -93,7 +96,7 @@ For example:
 python3 main.py 9
 ```
 
-If \(d(9)\) has not already been computed, the program enumerates the connected graphs on 9 vertices and updates `distinct_R.seq`.
+If $d(9)$ has not already been computed, the program enumerates the connected graphs on 9 vertices and updates `distinct_R.seq`.
 
 Previously computed values are retained, so individual values can be computed incrementally.
 
@@ -126,7 +129,7 @@ The effective resistance calculation uses the graph Laplacian and its numerical 
 
 ## Reproducibility
 
-The computation is deterministic for a fixed \(n\): `geng` provides the graph enumeration and no random sampling is used.
+The computation is deterministic for a fixed $n$: `geng` provides the graph enumeration and no random sampling is used.
 
 Because effective resistances are currently computed using floating-point linear algebra, numerical equality is determined by the resulting floating-point values. Exact-arithmetic validation is a potential direction for future work.
 
