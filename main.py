@@ -23,15 +23,12 @@ def enumerate_graphs(n):
     for line in proc.stdout:
         yield nx.from_graph6_bytes(line.strip().encode())
 
-def integer_resistance_matrix(G):
+def resistance_matrix(G):
     n = G.number_of_nodes()
     L = nx.laplacian_matrix(G).astype(float).toarray()
     Lplus = np.linalg.pinv(L)
     d = np.diag(Lplus)
-    R = d[:, None] + d[None, :] - 2 * Lplus
-    tau = round(np.linalg.det(L[1:, 1:]))
-    R_int = np.rint(tau * R).astype(np.int64)
-    return R_int, tau, R
+    return (d[:, None] + d[None, :] - 2 * Lplus)
 
 
 def count_distinct_R(n):
@@ -43,8 +40,8 @@ def count_distinct_R(n):
         distinct = set()
         for i, G in enumerate(enumerate_graphs(n)):
             log(f"computing # of unique R vals for graph isomorphism class {i}")
-            R_int, _, _ = integer_resistance_matrix(G)
-            R_unique = np.unique(R_int.flatten())
+            R = resistance_matrix(G)
+            R_unique = np.unique(R.flatten())
             log(f"{len(R_unique)} distinct vals found")
             distinct = distinct.union(set(R_unique))
             log(f"current total: {len(distinct)}")
